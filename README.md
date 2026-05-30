@@ -1,421 +1,169 @@
+# T5-Base Text Simplification
 
-## 🚀 Introduction
-
-This project focuses on implementing and fine-tuning the **T5-Base (Text-To-Text Transfer Transformer)** model for advanced Natural Language Processing (NLP) tasks using **PyTorch** and the **Hugging Face Transformers Library**.
-
-T5 is one of the most powerful transformer-based architectures developed by urlGoogle Research[https://research.google](https://research.google). Unlike traditional NLP models that treat every task differently, T5 converts all NLP problems into a unified **text-to-text format**. This makes it extremely flexible for tasks such as:
-
-* Text Summarization
-* Question Answering
-* Translation
-* Text Generation
-* Sentence Completion
-* Paraphrasing
-* Conversational AI
-* Classification Tasks
-
-The main purpose of this project is to explore how transformer architectures work internally while also building a practical deep learning pipeline for real-world NLP applications.
+Fine-tuning a **T5-Base** model for automatic text simplification using the **WikiLarge-clean** dataset. The model takes complex English sentences and rewrites them in simpler, more readable language — achieving results competitive with published research baselines.
 
 ---
 
-## 🎯 Objectives
+## 🎯 Task
 
-The project was designed with the following objectives:
+**Text Simplification** — Given a complex sentence, generate a simpler version that preserves the original meaning while reducing vocabulary complexity and sentence length.
 
-* Understand the architecture of transformer-based language models
-* Learn how encoder-decoder models process textual information
-* Implement tokenization and preprocessing pipelines
-* Fine-tune pretrained transformer models on custom datasets
-* Generate meaningful text outputs using beam search and decoding strategies
-* Evaluate model performance using NLP evaluation metrics
-* Explore GPU-accelerated deep learning workflows
-* Build a scalable NLP solution for future AI applications
+| Input (Complex) | Output (Simplified) |
+|---|---|
+| "Stream ciphers can be susceptible to serious security problems if used incorrectly: see stream cipher attacks — in particular, the same starting state must never be used twice." | "Stream ciphers can be vulnerable to serious security problems if used incorrectly." |
+| "Gnathostomulids, or jaw worms, are a small phylum of nearly microscopic marine animals." | "Gnathostomulids are a small phylum of almost microscopic marine animals." |
 
 ---
 
-## 🧠 About T5 (Text-To-Text Transfer Transformer)
+## 📊 Results
 
-T5 is an encoder-decoder transformer model introduced by Google in the research paper:
+| Metric | Score |
+|---|---|
+| BLEU Score | 40.29 |
+| SARI Score | 32.38 |
+| Samples Evaluated | 417 |
+| Avg. Length Reduction | ~26% |
 
-**"Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer"**
+### Comparison with Published Baselines
 
-The major idea behind T5 is:
-
-> Every NLP task can be represented as a text generation problem.
-
-For example:
-
-| Task               | Input                              | Output                  |
-| ------------------ | ---------------------------------- | ----------------------- |
-| Translation        | translate English to French: Hello | Bonjour                 |
-| Summarization      | summarize: Long article...         | Short summary           |
-| Question Answering | question: What is AI?              | Artificial Intelligence |
-
-This unified approach makes T5 highly powerful and adaptable.
+| Model | BLEU | SARI | Notes |
+|---|---|---|---|
+| MUSS (Martin et al. 2022) | 42.53 | 40.29 | BART-large, WikiLarge |
+| ACCESS (Martin et al. 2020) | 40.91 | 41.87 | Ctrl tokens on BART |
+| LS-Seq2Seq (Nisioi 2017) | 37.25 | 37.11 | Vanilla LSTM baseline |
+| **T5-Base (This Project)** | **40.29** | **32.38** | T5-base, WikiLarge-clean |
 
 ---
 
-## ⚙️ Technologies and Libraries Used
+## 🗂️ Dataset
 
-This project uses several modern AI and deep learning technologies:
+**WikiLarge-clean** (`eilamc14/wikilarge-clean`) from Hugging Face Datasets
 
-* **Python** → Core programming language
-* **PyTorch** → Deep learning framework
-* **Transformers Library** → Pretrained transformer models
-* **T5Tokenizer** → Tokenization for T5 model
-* **CUDA / GPU Acceleration** → Faster training
-* **NumPy** → Numerical operations
-* **Pandas** → Dataset handling
-* **Matplotlib** → Visualization
-* **Scikit-learn** → Evaluation utilities
-* **Jupyter Notebook** → Interactive development environment
+| Split | Samples |
+|---|---|
+| Train (used) | 30,000 |
+| Validation | 417 |
+| Test | 121 |
 
----
-
-## 🔥 Key Features
-
-### ✅ Transformer-Based NLP Pipeline
-
-Implements a complete transformer workflow including preprocessing, tokenization, training, inference, and evaluation.
-
-### ✅ Pretrained T5-Base Integration
-
-Uses pretrained weights from Hugging Face to leverage transfer learning and improve NLP performance.
-
-### ✅ Text-to-Text Learning Approach
-
-All tasks are converted into a unified text generation format.
-
-### ✅ Fine-Tuning Support
-
-Allows fine-tuning on custom datasets for domain-specific NLP tasks.
-
-### ✅ GPU Support
-
-Uses CUDA-enabled GPUs for efficient and faster model training.
-
-### ✅ Sequence Generation
-
-Generates high-quality text outputs using decoding methods such as:
-
-* Beam Search
-* Greedy Decoding
-* Sampling
-
-### ✅ Evaluation Metrics
-
-Measures model performance using NLP evaluation techniques.
+- **Source column:** complex sentences
+- **Target column:** simplified sentences
+- Mean complex sentence length: **27.3 words**
+- Mean simple sentence length: **18.8 words**
+- Natural dataset reduction: **~30%**
 
 ---
 
-## 🏗️ Deep Learning Workflow
+## 🧠 Model
 
-The project follows a complete end-to-end NLP workflow:
+**T5-Base** — Text-To-Text Transfer Transformer by Google Research
 
-1. Data Collection
-2. Data Cleaning
-3. Text Preprocessing
-4. Tokenization
-5. Dataset Preparation
-6. Model Loading
-7. Fine-Tuning
-8. Training Loop
-9. Validation
-10. Text Generation
-11. Performance Evaluation
-12. Prediction and Inference
+- Parameters: **222.9M** (all trainable)
+- Architecture: Encoder-Decoder Transformer
+- Input prefix: `"simplify: "`
+- Device: CUDA (Tesla T4, 15.6 GB)
 
 ---
 
-## 📚 Tokenization Process
+## ⚙️ Training Configuration
 
-The project uses **T5Tokenizer** for converting textual data into numerical token IDs understandable by the transformer model.
+| Parameter | Value |
+|---|---|
+| Epochs | 4 |
+| Train batch size | 8 |
+| Gradient accumulation | 2 (effective batch: 16) |
+| Learning rate | 3e-05 |
+| Warmup steps | 374 |
+| FP16 mixed precision | ✅ |
+| Early stopping | ✅ |
+| Max input length | 256 tokens |
+| Max output length | 128 tokens |
+| Train runtime | ~6803s (~1h 53m) |
 
-Important tokenization operations include:
+### Training Loss per Epoch
 
-* Padding
-* Truncation
-* Attention Masks
-* Input Encoding
-* Decoding Generated Tokens
-
-Tokenization is one of the most important steps because transformer models cannot directly process raw text.
-
----
-
-## 🖥️ Model Training
-
-The model training process includes:
-
-* Forward propagation
-* Loss computation
-* Backpropagation
-* Gradient optimization
-* Weight updates
-* Epoch-wise learning
-
-The optimizer helps minimize training loss and improve prediction quality over time.
-
-The project also demonstrates how transfer learning significantly reduces training time compared to training models from scratch.
+| Epoch | Training Loss | Validation Loss |
+|---|---|---|
+| 1 | 5.1048 | 2.2903 |
+| 2 | 4.6675 | 2.2401 |
+| 3 | 4.6346 | 2.2113 |
+| 4 | 4.5111 | 2.2274 |
 
 ---
 
-## 📊 Evaluation and Performance
+## 🔧 Inference
 
-After training, the model performance is evaluated using multiple techniques.
+The `simplify()` function uses **beam search** decoding:
 
-The evaluation phase helps determine:
-
-* Accuracy of generated text
-* Semantic understanding capability
-* Generalization performance
-* Response quality
-* Loss reduction
-
-Generated outputs are compared against expected outputs to analyze model effectiveness.
-
----
-
-## 🤖 Applications of This Project
-
-This project can be extended into multiple real-world AI systems such as:
-
-* AI Chatbots
-* Smart Virtual Assistants
-* Automatic Summarizers
-* Language Translation Systems
-* Educational AI Tools
-* Customer Support Automation
-* Content Generation Systems
-* Question Answering Platforms
-* Intelligent Search Engines
+```python
+def simplify(text: str,
+             num_beams: int = 5,
+             max_length: int = 128,
+             min_length: int = 5,
+             length_penalty: float = 1.0,
+             no_repeat_ngram_size: int = 3) -> str:
+    """Simplify a complex English sentence using the fine-tuned T5-base model."""
+```
 
 ---
 
-## 🌍 Real-World Importance
+## 🛠️ Technologies Used
 
-Transformer-based architectures like T5 are currently used in many advanced AI systems developed by major technology companies.
-
-Understanding these models provides strong foundations for:
-
-* Artificial Intelligence
-* Deep Learning
-* Natural Language Processing
-* Generative AI
-* Large Language Models (LLMs)
-
-This project is highly useful for students, researchers, and AI engineers who want practical experience with modern NLP systems.
-
----
-
-## 🔬 Learning Outcomes
-
-By completing this project, you can learn:
-
-* Fundamentals of transformer architectures
-* How attention mechanisms work
-* Sequence-to-sequence learning
-* Transfer learning in NLP
-* Fine-tuning pretrained models
-* Deep learning workflows using PyTorch
-* NLP model deployment concepts
-* GPU-based AI training
+| Tool | Purpose |
+|---|---|
+| Python | Core language |
+| PyTorch | Deep learning framework |
+| Hugging Face Transformers | T5 model & Seq2SeqTrainer |
+| Hugging Face Datasets | WikiLarge-clean dataset |
+| NLTK | BLEU score computation |
+| CUDA / GPU | Accelerated training |
+| NumPy / Matplotlib | Analysis & visualization |
+| SentencePiece | T5 tokenization |
 
 ---
 
-## 📈 Future Improvements
+## 📦 Installation
 
-Possible future enhancements include:
-
-* Integrating larger transformer models
-* Building a web-based interface
-* Deploying the model using APIs
-* Adding multilingual support
-* Using reinforcement learning techniques
-* Optimizing inference speed
-* Implementing distributed training
-* Adding real-time chatbot capabilities
+```bash
+pip install -q transformers datasets sacrebleu sacremoses sentencepiece nltk torch
+```
 
 ---
 
-## 🤝 Contribution
+## ▶️ Running the Project
 
-Contributions are welcome.
+Run the notebook on:
+- **Kaggle** (recommended — Tesla T4 GPU available free)
+- Google Colab
+- Jupyter Notebook (GPU required for reasonable training time)
 
-You can contribute by:
+---
 
-* Improving model performance
-* Optimizing training pipelines
-* Adding new NLP tasks
-* Enhancing documentation
-* Fixing bugs and issues
+## 📈 Evaluation Metrics
+
+**BLEU** — measures n-gram overlap between generated and reference sentences. Rewards outputs that are close to the reference but can be gamed by copying the source.
+
+**SARI** — measures the quality of simplification by evaluating add, delete, and keep operations against the reference. SARI is the **preferred metric** for text simplification as it better reflects actual simplification quality. Models with high BLEU but low SARI tend to copy the source without simplifying.
+
+---
+
+## 🔮 Future Improvements
+
+- Add controllability tokens (length ratio, lexical complexity) as in MUSS/ACCESS
+- Fine-tune larger variants: `t5-large`, `flan-t5`
+- Pre-train on paraphrase data (ParaBank2) before simplification fine-tuning
+- Deploy as a web API using FastAPI
+- Add multilingual simplification support
+
+---
+
+## 📜 References
+
+1. Martin et al. (2022). *MUSS: Multilingual Unsupervised Sentence Simplification by Mining Paraphrases.* ACL Findings. https://arxiv.org/abs/2005.00352
+2. Martin et al. (2020). *Controllable Sentence Simplification.* LREC. https://arxiv.org/abs/1910.02677
+3. Xu et al. (2016). *Optimizing Statistical Machine Translation for Text Simplification.* TACL. (Introduced SARI metric and WikiLarge dataset)
 
 ---
 
 ## 📜 License
 
-This project is developed for educational and research purposes.
-
----
-
-## ⭐ Conclusion
-
-This project demonstrates the practical implementation of advanced transformer-based Natural Language Processing using the T5-Base model.
-
-It provides hands-on experience with modern AI technologies including:
-
-* Transformer Architectures
-* Transfer Learning
-* Sequence-to-Sequence Models
-* Text Generation
-* Deep Learning with PyTorch
-
-The project serves as a strong foundation for developing advanced AI applications and understanding modern Large Language Models (LLMs).
-
-* Visualization and analysis of results
-
-The project is designed for learning and experimentation with modern Natural Language Processing (NLP) techniques.
-
----
-
-# 🚀 Features
-
-* ✅ T5-Base model implementation
-* ✅ Hugging Face Transformers integration
-* ✅ PyTorch deep learning workflow
-* ✅ Dataset preprocessing pipeline
-* ✅ Model training and evaluation
-* ✅ GPU support (CUDA)
-* ✅ Seq2Seq learning architecture
-* ✅ Easy-to-understand notebook structure
-
----
-
-# 🛠️ Technologies Used
-
-* Python
-* PyTorch
-* Hugging Face Transformers
-* NumPy
-* Pandas
-* Matplotlib
-* Datasets Library
-* SentencePiece
-
----
-
-
-
-## 2️⃣ Install Dependencies
-
-```bash
-pip install -q transformers datasets sacrebleu sacremoses sentencepiece
-```
-
-Or install from requirements file:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# ▶️ Running the Project
-
-
-
-You can also run it on:
-
-* Kaggle
-* Google Colab
-* Jupyter Notebook
-
----
-
-# 🧠 About T5
-
-T5 (Text-To-Text Transfer Transformer) is a transformer-based model developed by Google.
-
-It converts every NLP task into a text generation problem.
-
-Examples:
-
-| Task               | Input                       |
-| ------------------ | --------------------------- |
-| Translation        | translate English to French |
-| Summarization      | summarize: article          |
-| Question Answering | question: ... context: ...  |
-| Classification     | classify sentiment: ...     |
-
----
-
-# 📊 Model Workflow
-
-1. Load Dataset
-2. Preprocess Text
-3. Tokenize Input and Target Text
-4. Load T5-Base Model
-5. Train using Seq2SeqTrainer
-6. Evaluate Performance
-7. Generate Predictions
-
----
-
-# 📈 Evaluation Metrics
-
-The project may use:
-
-* BLEU Score
-* Accuracy
-* Loss Curves
-* Validation Metrics
-
----
-
-# 💻 GPU Support
-
-The notebook automatically detects CUDA:
-
-```python
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-```
-
----
-
-# 📷 Sample Output
-
-```python
-Input: summarize: Artificial Intelligence is transforming industries...
-
-Output: AI is rapidly changing industries through automation and intelligent systems.
-```
-
----
-
-# 🎯 Learning Objectives
-
-This project helps in understanding:
-
-* Transformer Architecture
-* Sequence-to-Sequence Models
-* NLP Fine-Tuning
-* Text Generation
-* Deep Learning with PyTorch
-* Hugging Face Ecosystem
-
----
-
-# 🔮 Future Improvements
-
-* Add custom datasets
-* Hyperparameter tuning
-* Deploy model with Flask/FastAPI
-* Add web interface
-* Improve evaluation metrics
-* Experiment with larger transformer models
-
----
-
-
----
-
+Developed for educational and research purposes.
