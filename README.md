@@ -1,6 +1,5 @@
 ## 📓 View Full Notebook
-👉 [Click here to view the complete notebook](https://colab.research.google.com/drive/1LX546OpJMG489nvB5jV8vwSEJVou0U3J?usp=sharing)
-
+👉 [Click here to view the complete notebook]https://colab.research.google.com/drive/1LX546OpJMG489nvB5jV8vwSEJVou0U3J?usp=sharing
 
 # T5-Base Text Simplification
 
