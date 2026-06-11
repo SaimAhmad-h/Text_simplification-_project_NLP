@@ -24,7 +24,7 @@ Fine-tuning a **T5-Base** model for automatic text simplification using the **Wi
 |---|---|
 | BLEU Score | 40.29 |
 | SARI Score | 32.38 |
-| Samples Evaluated | 417 |
+| Samples Evaluated(validation_used) | 417 |
 | Avg. Length Reduction | ~26% |
 
 ### Comparison with Published Baselines
